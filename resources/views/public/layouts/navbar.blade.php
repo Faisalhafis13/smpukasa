@@ -18,114 +18,121 @@
 
             </a>
 
+
             {{-- MENU --}}
             <div class="navbar-menu">
 
+                {{-- BERANDA --}}
                 <a
                     href="{{ route('home') }}"
-                    class="nav-link"
+                    class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}"
                 >
                     Beranda
                 </a>
 
+
+                {{-- PROFIL --}}
+<div class="nav-dropdown">
+    <button type="button" class="nav-link dropdown-button">
+        Profil <span>⌄</span>
+    </button>
+
+    <div class="dropdown-menu">
+
+        <a href="{{ route('profil.index') }}">
+            Tentang Sekolah
+        </a>
+
+
+        <a href="{{ route('guru.index') }}">
+            Guru & Tenaga Kependidikan
+        </a>
+
+    </div>
+</div>
+
+                {{-- AKADEMIK --}}
+<div class="nav-dropdown">
+    <button type="button" class="nav-link dropdown-button">
+        Akademik <span>⌄</span>
+    </button>
+
+    <div class="dropdown-menu">
+        <a href="{{ route('program.index', ['jenis' => 'Program Unggulan']) }}">
+            Program Unggulan
+        </a>
+
+        <a href="{{ route('program.index', ['jenis' => 'Ekstrakurikuler']) }}">
+            Ekstrakurikuler
+        </a>
+
+        <a href="{{ route('prestasi.index') }}">
+            Prestasi
+        </a>
+    </div>
+</div>
+
+
+                {{-- INFORMASI --}}
                 <div class="nav-dropdown">
 
-                    <button class="nav-link dropdown-button">
-                        Profil
-                        <span>⌄</span>
-                    </button>
-
-                    <div class="dropdown-menu">
-
-                        <a href="#">
-                            Tentang Sekolah
-                        </a>
-
-                        <a href="#">
-                            Sejarah
-                        </a>
-
-                        <a href="#">
-                            Visi & Misi
-                        </a>
-
-                        <a href="#">
-                            Guru & Tenaga Kependidikan
-                        </a>
-
-                    </div>
-
-                </div>
-
-                <div class="nav-dropdown">
-
-                    <button class="nav-link dropdown-button">
-                        Akademik
-                        <span>⌄</span>
-                    </button>
-
-                    <div class="dropdown-menu">
-
-                        <a href="#">
-                            Program Unggulan
-                        </a>
-
-                        <a href="#">
-                            Ekstrakurikuler
-                        </a>
-
-                        <a href="#">
-                            Prestasi
-                        </a>
-
-                    </div>
-
-                </div>
-
-                <div class="nav-dropdown">
-
-                    <button class="nav-link dropdown-button">
+                    <button
+                        type="button"
+                        class="nav-link dropdown-button"
+                    >
                         Informasi
                         <span>⌄</span>
                     </button>
 
                     <div class="dropdown-menu">
 
-                        <a href="#">
+                        <a href="{{ route('berita.index') }}">
                             Berita
                         </a>
 
-                        <a href="#">
+                        <a href="{{ route('agenda.index') }}">
                             Agenda
-                        </a>
-
-                        <a href="#">
-                            Pengumuman
-                        </a>
 
                     </div>
 
                 </div>
 
-                <a href="#" class="nav-link">
+
+                {{-- GALERI --}}
+                <a
+                    href="{{ route('galeri.index') }}"
+                    class="nav-link {{ request()->routeIs('galeri.*') ? 'active' : '' }}"
+                >
                     Galeri
                 </a>
 
-                <a href="#" class="nav-link">
+
+                {{-- FASILITAS --}}
+                <a
+                    href="{{ route('fasilitas.index') }}"
+                    class="nav-link {{ request()->routeIs('fasilitas.*') ? 'active' : '' }}"
+                >
                     Fasilitas
                 </a>
 
-                <a href="#" class="nav-link nav-cta">
+
+                {{-- SPMB --}}
+                <a
+                    href="{{ route('spmb.index') }}"
+                    class="nav-link nav-cta {{ request()->routeIs('spmb.*') ? 'active' : '' }}"
+                >
                     SPMB
                 </a>
 
             </div>
+
 
             {{-- MOBILE BUTTON --}}
             <button
                 type="button"
                 class="mobile-menu-button"
                 id="mobileMenuButton"
+                aria-label="Buka menu"
             >
                 ☰
             </button>

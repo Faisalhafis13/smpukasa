@@ -26,6 +26,6 @@ class BeritaController extends Controller
 
         abort_if(!$berita, 404);
 
-        return view('public.berita.detail', compact('berita'));
+        return view('public.berita.show', compact('berita'));
     }
 }

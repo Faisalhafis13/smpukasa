@@ -6,32 +6,33 @@ use App\Models\Berita;
 
 class BeritaRepository
 {
+    /**
+     * Mengambil seluruh berita.
+     */
     public function getPublished()
     {
-        return Berita::where('status', 'published')
-            ->whereNotNull('tanggal_publish')
-            ->whereDate('tanggal_publish', '<=', now())
-            ->latest('tanggal_publish')
+        return Berita::latest('created_at')
             ->latest('id')
             ->get();
     }
 
+    /**
+     * Mengambil berita terbaru.
+     */
     public function getLatest(int $limit = 3)
     {
-        return Berita::where('status', 'published')
-            ->whereNotNull('tanggal_publish')
-            ->whereDate('tanggal_publish', '<=', now())
-            ->latest('tanggal_publish')
+        return Berita::latest('created_at')
             ->latest('id')
             ->take($limit)
             ->get();
     }
 
+    /**
+     * Mengambil berita berdasarkan slug.
+     */
     public function findBySlug(string $slug): ?Berita
     {
         return Berita::where('slug', $slug)
-            ->where('status', 'published')
-            ->whereDate('tanggal_publish', '<=', now())
             ->first();
     }
 }

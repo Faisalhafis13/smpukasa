@@ -1,0 +1,24 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Agenda extends Model
+{
+    protected $table = 'agendas';
+
+    protected $fillable = [
+        'judul',
+        'deskripsi',
+        'tanggal',
+        'waktu',
+        'lokasi',
+        'penyelenggara',
+        'status',
+    ];
+
+    protected $casts = [
+        'tanggal' => 'date',
+    ];
+}

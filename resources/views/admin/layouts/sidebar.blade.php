@@ -57,57 +57,62 @@
 
 </a>
 
-        <a href="#" class="admin-menu-item">
+<a href="{{ route('admin.agenda.index') }}"
+    class="admin-menu-item {{ request()->routeIs('admin.agenda.*') ? 'active' : '' }}">
 
-            <span class="admin-menu-icon">📅</span>
-            <span>Agenda</span>
+    <span class="admin-menu-icon">📅</span>
+    <span>Agenda</span>
 
-        </a>
-
+</a>
 
         <div class="admin-menu-label">
             AKADEMIK
         </div>
 
-        <a href="#" class="admin-menu-item">
+<a href="{{ route('admin.prestasi.index') }}"
+    class="admin-menu-item {{ request()->routeIs('admin.prestasi.*') ? 'active' : '' }}">
 
-            <span class="admin-menu-icon">🏆</span>
-            <span>Prestasi</span>
+    <span class="admin-menu-icon">🏆</span>
+    <span>Prestasi</span>
 
-        </a>
+</a>
+<a
+    href="{{ route('admin.fasilitas.index') }}"
+    class="admin-menu-item {{ request()->routeIs('admin.fasilitas.*') ? 'active' : '' }}"
+>
+    <span class="admin-menu-icon">🏫</span>
+    <span>Fasilitas</span>
+</a>
 
-        <a href="#" class="admin-menu-item">
+<a
+    href="{{ route('admin.guru.index') }}"
+    class="admin-menu-item {{ request()->routeIs('admin.guru.*') ? 'active' : '' }}"
+>
+    <span class="admin-menu-icon">👨‍🏫</span>
+    <span>Guru</span>
+</a>
 
-            <span class="admin-menu-icon">🏢</span>
-            <span>Fasilitas</span>
 
-        </a>
-
-        <a href="#" class="admin-menu-item">
-
-            <span class="admin-menu-icon">👨‍🏫</span>
-            <span>Guru</span>
-
-        </a>
-
-        <a href="#" class="admin-menu-item">
-
-            <span class="admin-menu-icon">📚</span>
-            <span>Program & Ekstrakurikuler</span>
-
-        </a>
-
+<a
+    href="{{ route('admin.program.index') }}"
+    class="admin-menu-item {{ request()->routeIs('admin.program.*') ? 'active' : '' }}"
+>
+    <span class="admin-menu-icon">🎓</span>
+    <span>Program & Ekstrakurikuler</span>
+</a>
 
         <div class="admin-menu-label">
             PENERIMAAN
         </div>
 
-        <a href="#" class="admin-menu-item">
+<a
+    href="{{ route('admin.spmb.index') }}"
+    class="admin-menu-item {{ request()->routeIs('admin.spmb.*') ? 'active' : '' }}"
+>
+    <span class="admin-menu-icon">📝</span>
+    <span>SPMB</span>
+</a>
 
-            <span class="admin-menu-icon">🎓</span>
-            <span>SPMB</span>
-
-        </a>
 
     </div>
 

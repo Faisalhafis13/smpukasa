@@ -4,8 +4,8 @@
 
 @section('content')
 
+    {{-- PAGE HERO --}}
     <section class="page-hero">
-
         <div class="container">
 
             <span class="section-eyebrow">
@@ -20,12 +20,11 @@
             </p>
 
         </div>
-
     </section>
 
 
+    {{-- GALERI --}}
     <section class="section">
-
         <div class="container">
 
             @if ($galeris->count())
@@ -36,14 +35,29 @@
 
                         <article class="gallery-card">
 
-                            <img
-                                src="{{ asset('storage/' . $galeri->gambar) }}"
-                                alt="{{ $galeri->judul }}"
-                            >
+                            {{-- GAMBAR --}}
+                            <div class="gallery-card-image">
 
+                                @if ($galeri->gambar)
+
+                                    <img
+                                        src="{{ asset('storage/' . $galeri->gambar) }}"
+                                        alt="{{ $galeri->judul }}"
+                                    >
+
+                                @else
+
+                                    <div class="gallery-placeholder"></div>
+
+                                @endif
+
+                            </div>
+
+
+                            {{-- KONTEN --}}
                             <div class="gallery-card-content">
 
-                                <span>
+                                <span class="gallery-category">
                                     {{ $galeri->kategori ?: 'Dokumentasi' }}
                                 </span>
 
@@ -84,7 +98,6 @@
             @endif
 
         </div>
-
     </section>
 
 @endsection
