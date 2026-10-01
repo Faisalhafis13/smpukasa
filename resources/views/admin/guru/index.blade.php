@@ -48,6 +48,21 @@
 
     </div>
 
+    @include('admin.layouts.page-size', ['paginator' => $gurus])
+    <form method="GET" action="{{ route('admin.guru.index') }}" class="admin-search-bar">
+        <input
+            type="search"
+            name="search"
+            value="{{ $search }}"
+            placeholder="Cari nama, jabatan, mata pelajaran, atau pendidikan..."
+            aria-label="Cari guru"
+        >
+        <button type="submit" class="admin-btn admin-btn-primary">Cari</button>
+        @if ($search)
+            <a href="{{ route('admin.guru.index') }}" class="admin-btn admin-btn-secondary">Reset</a>
+        @endif
+    </form>
+
 
     <div class="admin-table-wrapper">
 
@@ -74,7 +89,7 @@
                     <tr>
 
                         <td>
-                            {{ $index + 1 }}
+                            {{ $gurus->firstItem() + $index }}
                         </td>
 
                         <td>
@@ -94,18 +109,7 @@
 
                             @else
 
-                                <div style="
-                                    width:55px;
-                                    height:55px;
-                                    border-radius:50%;
-                                    background:#dcfce7;
-                                    display:flex;
-                                    align-items:center;
-                                    justify-content:center;
-                                    font-size:22px;
-                                ">
-                                    👨‍🏫
-                                </div>
+                                <div class="admin-image-placeholder is-square" aria-hidden="true"></div>
 
                             @endif
 
@@ -172,22 +176,13 @@
                             "
                         >
 
-                            <div style="
-                                font-size:45px;
-                                margin-bottom:10px;
-                            ">
-                                👨‍🏫
-                            </div>
-
-                            <strong>
-                                Belum ada data guru
-                            </strong>
+                            <strong>{{ $search ? 'Tidak ada guru yang cocok' : 'Belum ada data guru' }}</strong>
 
                             <p style="
                                 color:#64748b;
                                 margin-top:5px;
                             ">
-                                Tambahkan data guru pertama.
+                                {{ $search ? 'Coba kata kunci lain.' : 'Tambahkan data guru pertama.' }}
                             </p>
 
                         </td>
@@ -201,6 +196,8 @@
         </table>
 
     </div>
+
+    @include('admin.layouts.pagination', ['paginator' => $gurus])
 
 </div>
 
@@ -580,7 +577,7 @@ guruForm.addEventListener(
             closeGuruModal();
 
             setTimeout(() => {
-                window.location.reload();
+                window.AdminAjax.refresh();
             }, 1500);
 
         } catch (error) {
@@ -676,7 +673,7 @@ async function deleteGuru(id)
 
 
         setTimeout(() => {
-            window.location.reload();
+            window.AdminAjax.refresh();
         }, 1500);
 
     } catch (error) {

@@ -15,11 +15,13 @@ class ProgramController extends Controller
     ) {
     }
 
-    public function index(): View
+    public function index(Request $request): View
     {
-        $programs = $this->programRepository->getAll();
+        $search = trim((string) $request->query('search', ''));
+        $perPage = (int) $request->query('per_page', 10);
+        $programs = $this->programRepository->getAll($search, $perPage);
 
-        return view('admin.program.index', compact('programs'));
+        return view('admin.program.index', compact('programs', 'search'));
     }
 
     public function store(Request $request): JsonResponse

@@ -8,7 +8,7 @@
             id="adminSidebarToggle"
             aria-label="Buka menu">
 
-            ☰
+            Menu
 
         </button>
 
@@ -30,15 +30,22 @@
         <div class="admin-user">
 
             <div class="admin-user-avatar">
-                A
+                {{ \Illuminate\Support\Str::upper(\Illuminate\Support\Str::substr(auth()->user()->name, 0, 1)) }}
             </div>
 
             <div class="admin-user-info">
-                <strong>Administrator</strong>
-                <span>Admin</span>
+                <strong>{{ auth()->user()->name }}</strong>
+                <span>{{ auth()->user()->email }}</span>
             </div>
 
         </div>
+
+        <form method="POST" action="{{ route('admin.logout') }}">
+            @csrf
+            <button type="submit" class="admin-logout-button">
+                Keluar
+            </button>
+        </form>
 
     </div>
 

@@ -19,7 +19,8 @@ class BeritaController extends Controller
     public function index(Request $request): View
     {
         $search = trim((string) $request->query('search', ''));
-        $beritas = $this->beritaRepository->getAll($search);
+        $perPage = (int) $request->query('per_page', 10);
+        $beritas = $this->beritaRepository->getAll($search, $perPage);
 
         return view('admin.berita.index', compact('beritas', 'search'));
     }

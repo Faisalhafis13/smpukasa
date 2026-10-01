@@ -3,14 +3,29 @@
 namespace App\Repositories\Admin;
 
 use App\Models\Agenda;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class AgendaRepository
 {
-    public function getAll()
+    public function getAll(string $search = '', int $perPage = 10): LengthAwarePaginator
     {
-        return Agenda::orderBy('tanggal')
+        $perPage = min(max($perPage, 10), 100);
+
+        return Agenda::query()
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('judul', 'like', "%{$search}%")
+                        ->orWhere('deskripsi', 'like', "%{$search}%")
+                        ->orWhere('lokasi', 'like', "%{$search}%")
+                        ->orWhere('penyelenggara', 'like', "%{$search}%")
+                        ->orWhere('status', 'like', "%{$search}%");
+                });
+            })
+            ->orderBy('tanggal')
             ->orderBy('waktu')
-            ->get();
+            ->latest('id')
+            ->paginate($perPage)
+            ->withQueryString();
     }
 
     public function findById(int $id): ?Agenda

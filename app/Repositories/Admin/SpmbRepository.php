@@ -3,12 +3,27 @@
 namespace App\Repositories\Admin;
 
 use App\Models\Spmb;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class SpmbRepository
 {
-    public function getAll()
+    public function getAll(string $search = '', int $perPage = 10): LengthAwarePaginator
     {
-        return Spmb::latest()->get();
+        $perPage = min(max($perPage, 10), 100);
+
+        return Spmb::query()
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('judul', 'like', "%{$search}%")
+                        ->orWhere('deskripsi', 'like', "%{$search}%")
+                        ->orWhere('status', 'like', "%{$search}%")
+                        ->orWhere('kontak', 'like', "%{$search}%")
+                        ->orWhere('link_pendaftaran', 'like', "%{$search}%");
+                });
+            })
+            ->latest('id')
+            ->paginate($perPage)
+            ->withQueryString();
     }
 
     public function findById(int $id): ?Spmb

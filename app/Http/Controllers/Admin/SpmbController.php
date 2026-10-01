@@ -15,13 +15,15 @@ class SpmbController extends Controller
     ) {
     }
 
-    public function index(): View
+    public function index(Request $request): View
     {
-        $spmbs = $this->spmbRepository->getAll();
+        $search = trim((string) $request->query('search', ''));
+        $perPage = (int) $request->query('per_page', 10);
+        $spmbs = $this->spmbRepository->getAll($search, $perPage);
 
         return view(
             'admin.spmb.index',
-            compact('spmbs')
+            compact('spmbs', 'search')
         );
     }
 
@@ -63,12 +65,6 @@ class SpmbController extends Controller
             'alur_pendaftaran' => [
                 'nullable',
                 'string',
-            ],
-
-            'link_pendaftaran' => [
-                'nullable',
-                'url',
-                'max:500',
             ],
 
             'kontak' => [
@@ -166,12 +162,6 @@ class SpmbController extends Controller
             'alur_pendaftaran' => [
                 'nullable',
                 'string',
-            ],
-
-            'link_pendaftaran' => [
-                'nullable',
-                'url',
-                'max:500',
             ],
 
             'kontak' => [

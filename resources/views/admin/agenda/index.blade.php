@@ -44,6 +44,21 @@
 
     </div>
 
+    @include('admin.layouts.page-size', ['paginator' => $agendas])
+    <form method="GET" action="{{ route('admin.agenda.index') }}" class="admin-search-bar">
+        <input
+            type="search"
+            name="search"
+            value="{{ $search }}"
+            placeholder="Cari judul, lokasi, penyelenggara, atau status..."
+            aria-label="Cari agenda"
+        >
+        <button type="submit" class="admin-btn admin-btn-primary">Cari</button>
+        @if ($search)
+            <a href="{{ route('admin.agenda.index') }}" class="admin-btn admin-btn-secondary">Reset</a>
+        @endif
+    </form>
+
 
     <div class="admin-table-wrapper">
 
@@ -70,7 +85,7 @@
                     <tr>
 
                         <td>
-                            {{ $index + 1 }}
+                            {{ $agendas->firstItem() + $index }}
                         </td>
 
                         <td>
@@ -166,22 +181,13 @@
                             "
                         >
 
-                            <div style="
-                                font-size:45px;
-                                margin-bottom:10px;
-                            ">
-                                📅
-                            </div>
-
-                            <strong>
-                                Belum ada agenda
-                            </strong>
+                            <strong>{{ $search ? 'Tidak ada agenda yang cocok' : 'Belum ada agenda' }}</strong>
 
                             <p style="
                                 color:#64748b;
                                 margin-top:5px;
                             ">
-                                Tambahkan agenda kegiatan sekolah.
+                                {{ $search ? 'Coba kata kunci lain.' : 'Tambahkan agenda kegiatan sekolah.' }}
                             </p>
 
                         </td>
@@ -195,6 +201,8 @@
         </table>
 
     </div>
+
+    @include('admin.layouts.pagination', ['paginator' => $agendas])
 
 </div>
 
@@ -587,7 +595,7 @@ agendaForm.addEventListener(
         closeAgendaModal();
 
         setTimeout(() => {
-            window.location.reload();
+            window.AdminAjax.refresh();
         }, 1500);
 
     }
@@ -669,7 +677,7 @@ async function deleteAgenda(id) {
 
 
     setTimeout(() => {
-        window.location.reload();
+        window.AdminAjax.refresh();
     }, 1500);
 
 }

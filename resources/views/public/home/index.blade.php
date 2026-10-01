@@ -155,7 +155,7 @@
     QUICK INFO
 ========================================================= --}}
 
-<section class="home-quick-info">
+<section class="home-quick-info" data-scroll-reveal>
 
     <div class="container">
 
@@ -240,7 +240,7 @@
     SAMBUTAN KEPALA SEKOLAH
 ========================================================= --}}
 
-<section class="section home-about-v2">
+<section class="section home-about-v2" data-scroll-reveal>
 
     <div class="container">
 
@@ -343,98 +343,10 @@
 
 
 {{-- =========================================================
-    STATISTIK
-========================================================= --}}
-
-<section class="home-counter-section">
-
-    <div class="container">
-
-
-        <div class="home-counter-header">
-
-            <span class="section-label">
-                SEKILAS SEKOLAH
-            </span>
-
-            <h2>
-
-                Tumbuh Bersama,
-                Melangkah Lebih Jauh
-
-            </h2>
-
-        </div>
-
-
-        <div class="home-counter-grid">
-
-
-            <div class="home-counter-item">
-
-                <strong>
-                    0
-                </strong>
-
-                <span>
-                    Peserta Didik
-                </span>
-
-            </div>
-
-
-            <div class="home-counter-item">
-
-                <strong>
-                    0
-                </strong>
-
-                <span>
-                    Guru & Tendik
-                </span>
-
-            </div>
-
-
-            <div class="home-counter-item">
-
-                <strong>
-                    0
-                </strong>
-
-                <span>
-                    Prestasi
-                </span>
-
-            </div>
-
-
-            <div class="home-counter-item">
-
-                <strong>
-                    0
-                </strong>
-
-                <span>
-                    Program
-                </span>
-
-            </div>
-
-
-        </div>
-
-    </div>
-
-</section>
-
-
-
-{{-- =========================================================
     NILAI SEKOLAH
 ========================================================= --}}
 
-<section class="section">
+<section class="section" data-scroll-reveal>
 
     <div class="container">
 
@@ -546,7 +458,7 @@
     BERITA
 ========================================================= --}}
 
-<section class="section section-light">
+<section class="section section-light" data-scroll-reveal>
 
     <div class="container">
 
@@ -807,7 +719,7 @@
     PROGRAM
 ========================================================= --}}
 
-<section class="section">
+<section class="section" data-scroll-reveal>
 
     <div class="container">
 
@@ -980,7 +892,7 @@
     HERO TIDAK AKAN MENGARAH KE SECTION INI.
 ========================================================= --}}
 
-<section class="section section-light">
+<section class="section section-light" data-scroll-reveal>
 
     <div class="container">
 
@@ -1255,7 +1167,7 @@
     SPMB CTA
 ========================================================= --}}
 
-<section class="home-spmb-v2">
+<section class="home-spmb-v2" data-scroll-reveal>
 
     <div class="home-spmb-overlay"></div>
 
@@ -1306,117 +1218,6 @@
 
 </section>
 
-
-
-{{-- =========================================================
-    HERO SLIDER JAVASCRIPT
-========================================================= --}}
-
-<script>
-
-document.addEventListener('DOMContentLoaded', function () {
-
-    const heroSlider =
-        document.getElementById('homeHeroSlider');
-
-
-    if (!heroSlider) {
-        return;
-    }
-
-
-    const slides =
-        heroSlider.querySelectorAll('.home-hero-slide');
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Kalau foto hero hanya 0 atau 1,
-    | tidak perlu menjalankan slideshow.
-    |--------------------------------------------------------------------------
-    */
-
-    if (slides.length <= 1) {
-        return;
-    }
-
-
-    let currentSlide = 0;
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Menampilkan slide tertentu
-    |--------------------------------------------------------------------------
-    */
-
-    function showHeroSlide(index) {
-
-        slides.forEach(function (slide, slideIndex) {
-
-            if (slideIndex === index) {
-
-                slide.classList.add('active');
-
-            } else {
-
-                slide.classList.remove('active');
-
-            }
-
-        });
-
-
-        currentSlide = index;
-
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Tampilkan foto pertama
-    |--------------------------------------------------------------------------
-    */
-
-    showHeroSlide(0);
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | SLIDESHOW
-    |
-    | Foto:
-    | 1 → 2 → 3 → 4 → terakhir
-    |
-    | Setelah foto terakhir:
-    | STOP.
-    |
-    | Tidak kembali ke foto pertama.
-    | Tidak scroll.
-    | Tidak membuka halaman galeri.
-    |--------------------------------------------------------------------------
-    */
-
-    const heroInterval = setInterval(function () {
-
-
-        if (currentSlide >= slides.length - 1) {
-
-            clearInterval(heroInterval);
-
-            return;
-
-        }
-
-
-        showHeroSlide(currentSlide + 1);
-
-
-    }, 6000);
-
-});
-
-</script>
 
 
 @endsection

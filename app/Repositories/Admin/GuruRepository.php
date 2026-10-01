@@ -3,12 +3,27 @@
 namespace App\Repositories\Admin;
 
 use App\Models\Guru;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class GuruRepository
 {
-    public function getAll()
+    public function getAll(string $search = '', int $perPage = 10): LengthAwarePaginator
     {
-        return Guru::latest()->get();
+        $perPage = min(max($perPage, 10), 100);
+
+        return Guru::query()
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('nama', 'like', "%{$search}%")
+                        ->orWhere('jabatan', 'like', "%{$search}%")
+                        ->orWhere('mata_pelajaran', 'like', "%{$search}%")
+                        ->orWhere('pendidikan', 'like', "%{$search}%")
+                        ->orWhere('deskripsi', 'like', "%{$search}%");
+                });
+            })
+            ->latest('id')
+            ->paginate($perPage)
+            ->withQueryString();
     }
 
     public function findById(int $id): ?Guru

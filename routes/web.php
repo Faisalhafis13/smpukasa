@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\BeritaController as AdminBeritaController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProfilController;
+use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Public\BeritaController as PublicBeritaController;
 use App\Http\Controllers\Public\HomeController;
 use Illuminate\Support\Facades\Route;
@@ -20,6 +21,8 @@ use App\Http\Controllers\Admin\ProgramController as AdminProgramController;
 use App\Http\Controllers\Public\ProgramController as PublicProgramController;
 use App\Http\Controllers\Admin\SpmbController as AdminSpmbController;
 use App\Http\Controllers\Public\SpmbController as PublicSpmbController;
+use App\Http\Controllers\Public\PendaftaranSpmbController as PublicPendaftaranSpmbController;
+use App\Http\Controllers\Admin\PendaftarSpmbController as AdminPendaftarSpmbController;
 use App\Http\Controllers\Public\ProfilController as PublicProfilController;
 
 /*
@@ -56,6 +59,13 @@ Route::get('/guru', [PublicGuruController::class, 'index'])
 Route::get('/program', [PublicProgramController::class, 'index'])
     ->name('program.index');
 
+Route::get('/spmb/pendaftaran', [PublicPendaftaranSpmbController::class, 'create'])
+    ->name('spmb.pendaftaran.create');
+
+Route::post('/spmb/pendaftaran', [PublicPendaftaranSpmbController::class, 'store'])
+    ->middleware('throttle:5,1')
+    ->name('spmb.pendaftaran.store');
+
 Route::get('/spmb', [PublicSpmbController::class, 'index'])
     ->name('spmb.index');
 
@@ -68,9 +78,28 @@ Route::get('/spmb', [PublicSpmbController::class, 'index'])
 |--------------------------------------------------------------------------
 */
 
+Route::middleware('guest')->group(function () {
+    Route::get('/admin/login', [AdminAuthController::class, 'create'])
+        ->name('admin.login');
+
+    Route::post('/admin/login', [AdminAuthController::class, 'store'])
+        ->name('admin.login.store');
+});
+
 Route::prefix('admin')
     ->name('admin.')
+    ->middleware('auth')
     ->group(function () {
+
+        Route::post('/logout', [AdminAuthController::class, 'destroy'])
+            ->name('logout');
+
+        Route::get('/pendaftar', [AdminPendaftarSpmbController::class, 'index'])
+            ->name('pendaftar.index');
+
+        Route::patch('/pendaftar/{id}', [AdminPendaftarSpmbController::class, 'updateStatus'])
+            ->whereNumber('id')
+            ->name('pendaftar.update');
 
         Route::get('/dashboard', [DashboardController::class, 'index'])
             ->name('dashboard');

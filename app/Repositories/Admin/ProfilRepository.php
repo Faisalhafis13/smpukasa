@@ -7,8 +7,10 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ProfilRepository
 {
-    public function getAll(string $search = ''): LengthAwarePaginator
+    public function getAll(string $search = '', int $perPage = 10): LengthAwarePaginator
     {
+        $perPage = min(max($perPage, 10), 100);
+
         return Profil::query()
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
@@ -20,7 +22,7 @@ class ProfilRepository
                 });
             })
             ->latest()
-            ->paginate(10)
+            ->paginate($perPage)
             ->withQueryString();
     }
 

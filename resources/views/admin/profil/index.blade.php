@@ -51,6 +51,7 @@
 
         </div>
 
+        @include('admin.layouts.page-size', ['paginator' => $profils])
         <form method="GET" action="{{ route('admin.profil.index') }}" class="admin-search-bar">
             <input
                 type="search"
@@ -159,16 +160,12 @@
 
                                 <div class="admin-empty">
 
-                                    <div class="admin-empty-icon">
-                                        🏫
-                                    </div>
-
                                     <h3>
-                                        Belum ada data profil
+                                        {{ $search ? 'Tidak ada profil yang cocok' : 'Belum ada data profil' }}
                                     </h3>
 
                                     <p>
-                                        Tambahkan profil sekolah untuk mulai mengisi informasi.
+                                        {{ $search ? 'Coba kata kunci lain.' : 'Tambahkan profil sekolah untuk mulai mengisi informasi.' }}
                                     </p>
 
                                 </div>
@@ -185,11 +182,7 @@
 
         </div>
 
-        @if ($profils->hasPages())
-            <div class="admin-pagination">
-                {{ $profils->onEachSide(1)->links() }}
-            </div>
-        @endif
+        @include('admin.layouts.pagination', ['paginator' => $profils])
 
     </div>
 
@@ -472,7 +465,7 @@
 
 <script>
 
-document.addEventListener('DOMContentLoaded', () => {
+const initializeProfilAdmin = () => {
 
     const modal = document.getElementById('profilModal');
 
@@ -714,7 +707,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 showConfirmButton: false
             });
 
-            window.location.reload();
+            window.AdminAjax.refresh();
 
 
         } catch (error) {
@@ -809,7 +802,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
 
 
-                    window.location.reload();
+                    window.AdminAjax.refresh();
 
 
                 } catch (error) {
@@ -826,7 +819,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         });
 
-});
+};
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeProfilAdmin, { once: true });
+} else {
+    initializeProfilAdmin();
+}
 
 </script>
 

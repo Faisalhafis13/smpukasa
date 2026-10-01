@@ -15,11 +15,13 @@ class PrestasiController extends Controller
     ) {
     }
 
-    public function index(): View
+    public function index(Request $request): View
     {
-        $prestasis = $this->prestasiRepository->getAll();
+        $search = trim((string) $request->query('search', ''));
+        $perPage = (int) $request->query('per_page', 10);
+        $prestasis = $this->prestasiRepository->getAll($search, $perPage);
 
-        return view('admin.prestasi.index', compact('prestasis'));
+        return view('admin.prestasi.index', compact('prestasis', 'search'));
     }
 
     public function store(Request $request): JsonResponse

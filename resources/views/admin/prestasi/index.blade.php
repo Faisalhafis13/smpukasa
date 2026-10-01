@@ -49,6 +49,21 @@
 
     </div>
 
+    @include('admin.layouts.page-size', ['paginator' => $prestasis])
+    <form method="GET" action="{{ route('admin.prestasi.index') }}" class="admin-search-bar">
+        <input
+            type="search"
+            name="search"
+            value="{{ $search }}"
+            placeholder="Cari prestasi, peraih, kategori, atau tingkat..."
+            aria-label="Cari prestasi"
+        >
+        <button type="submit" class="admin-btn admin-btn-primary">Cari</button>
+        @if ($search)
+            <a href="{{ route('admin.prestasi.index') }}" class="admin-btn admin-btn-secondary">Reset</a>
+        @endif
+    </form>
+
 
     <div class="admin-table-wrapper">
 
@@ -75,7 +90,7 @@
                     <tr>
 
                         <td>
-                            {{ $index + 1 }}
+                            {{ $prestasis->firstItem() + $index }}
                         </td>
 
                         <td>
@@ -95,18 +110,7 @@
 
                             @else
 
-                                <div style="
-                                    width:70px;
-                                    height:50px;
-                                    border-radius:8px;
-                                    background:#f1f5f9;
-                                    display:flex;
-                                    align-items:center;
-                                    justify-content:center;
-                                    font-size:20px;
-                                ">
-                                    🏆
-                                </div>
+                                <div class="admin-image-placeholder" aria-hidden="true"></div>
 
                             @endif
 
@@ -185,22 +189,13 @@
                             "
                         >
 
-                            <div style="
-                                font-size:45px;
-                                margin-bottom:10px;
-                            ">
-                                🏆
-                            </div>
-
-                            <strong>
-                                Belum ada prestasi
-                            </strong>
+                            <strong>{{ $search ? 'Tidak ada prestasi yang cocok' : 'Belum ada prestasi' }}</strong>
 
                             <p style="
                                 color:#64748b;
                                 margin-top:5px;
                             ">
-                                Tambahkan prestasi pertama.
+                                {{ $search ? 'Coba kata kunci lain.' : 'Tambahkan prestasi pertama.' }}
                             </p>
 
                         </td>
@@ -214,6 +209,8 @@
         </table>
 
     </div>
+
+    @include('admin.layouts.pagination', ['paginator' => $prestasis])
 
 </div>
 
@@ -635,7 +632,7 @@ prestasiForm.addEventListener(
             closePrestasiModal();
 
             setTimeout(() => {
-                window.location.reload();
+                window.AdminAjax.refresh();
             }, 1500);
 
         } catch (error) {
@@ -729,7 +726,7 @@ async function deletePrestasi(id) {
 
 
         setTimeout(() => {
-            window.location.reload();
+            window.AdminAjax.refresh();
         }, 1500);
 
     } catch (error) {

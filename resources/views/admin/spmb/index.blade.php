@@ -48,6 +48,21 @@
 
     </div>
 
+    @include('admin.layouts.page-size', ['paginator' => $spmbs])
+    <form method="GET" action="{{ route('admin.spmb.index') }}" class="admin-search-bar">
+        <input
+            type="search"
+            name="search"
+            value="{{ $search }}"
+            placeholder="Cari judul, status, kontak, atau link pendaftaran..."
+            aria-label="Cari SPMB"
+        >
+        <button type="submit" class="admin-btn admin-btn-primary">Cari</button>
+        @if ($search)
+            <a href="{{ route('admin.spmb.index') }}" class="admin-btn admin-btn-secondary">Reset</a>
+        @endif
+    </form>
+
 
     <div class="admin-table-wrapper">
 
@@ -73,7 +88,7 @@
                     <tr>
 
                         <td>
-                            {{ $index + 1 }}
+                            {{ $spmbs->firstItem() + $index }}
                         </td>
 
                         <td>
@@ -185,22 +200,13 @@
                             "
                         >
 
-                            <div style="
-                                font-size:45px;
-                                margin-bottom:10px;
-                            ">
-                                📝
-                            </div>
-
-                            <strong>
-                                Belum ada data SPMB
-                            </strong>
+                            <strong>{{ $search ? 'Tidak ada informasi SPMB yang cocok' : 'Belum ada data SPMB' }}</strong>
 
                             <p style="
                                 color:#64748b;
                                 margin-top:5px;
                             ">
-                                Tambahkan informasi SPMB pertama.
+                                {{ $search ? 'Coba kata kunci lain.' : 'Tambahkan informasi SPMB pertama.' }}
                             </p>
 
                         </td>
@@ -214,6 +220,8 @@
         </table>
 
     </div>
+
+    @include('admin.layouts.pagination', ['paginator' => $spmbs])
 
 </div>
 
@@ -363,22 +371,6 @@
                         id="spmbKontak"
                         name="kontak"
                         placeholder="Nomor telepon / WhatsApp"
-                    >
-
-                </div>
-
-
-                <div class="admin-form-group admin-form-full">
-
-                    <label for="spmbLink">
-                        Link Pendaftaran
-                    </label>
-
-                    <input
-                        type="url"
-                        id="spmbLink"
-                        name="link_pendaftaran"
-                        placeholder="https://..."
                     >
 
                 </div>
@@ -577,10 +569,6 @@ async function editSpmb(id)
         ).value = data.kontak ?? '';
 
         document.getElementById(
-            'spmbLink'
-        ).value = data.link_pendaftaran ?? '';
-
-        document.getElementById(
             'spmbDeskripsi'
         ).value = data.deskripsi ?? '';
 
@@ -700,7 +688,7 @@ spmbForm.addEventListener(
             closeSpmbModal();
 
             setTimeout(() => {
-                window.location.reload();
+                window.AdminAjax.refresh();
             }, 1500);
 
         } catch (error) {
@@ -797,7 +785,7 @@ async function deleteSpmb(id)
 
 
         setTimeout(() => {
-            window.location.reload();
+            window.AdminAjax.refresh();
         }, 1500);
 
     } catch (error) {

@@ -18,7 +18,8 @@ class GaleriController extends Controller
     public function index(Request $request): View
     {
         $search = trim((string) $request->query('search', ''));
-        $galeris = $this->galeriRepository->getAll($search);
+        $perPage = (int) $request->query('per_page', 10);
+        $galeris = $this->galeriRepository->getAll($search, $perPage);
 
         return view('admin.galeri.index', compact('galeris', 'search'));
     }

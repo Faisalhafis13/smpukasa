@@ -8,21 +8,66 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const mobileMenuButton =
         document.getElementById('mobileMenuButton');
+    const mobileMenu =
+        document.getElementById('mobileMenu');
 
-    if (mobileMenuButton) {
+    if (mobileMenuButton && mobileMenu) {
 
         mobileMenuButton.addEventListener('click', () => {
 
-            const mobileMenu =
-                document.getElementById('mobileMenu');
+            const isOpen = mobileMenu.classList.toggle('active');
+            mobileMenuButton.setAttribute('aria-expanded', String(isOpen));
+            mobileMenuButton.setAttribute(
+                'aria-label',
+                isOpen ? 'Tutup menu' : 'Buka menu'
+            );
 
-            if (mobileMenu) {
-                mobileMenu.classList.toggle('active');
+        });
+
+        mobileMenu.querySelectorAll('a').forEach((link) => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                mobileMenuButton.setAttribute('aria-expanded', 'false');
+                mobileMenuButton.setAttribute('aria-label', 'Buka menu');
+            });
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && mobileMenu.classList.contains('active')) {
+                mobileMenu.classList.remove('active');
+                mobileMenuButton.setAttribute('aria-expanded', 'false');
+                mobileMenuButton.setAttribute('aria-label', 'Buka menu');
+                mobileMenuButton.focus();
             }
 
         });
 
     }
+
+    document.querySelectorAll('.dropdown-button').forEach((button) => {
+        button.addEventListener('click', () => {
+            const dropdown = button.closest('.nav-dropdown');
+
+            if (!dropdown) {
+                return;
+            }
+
+            const isOpen = !dropdown.classList.contains('is-open');
+
+            document.querySelectorAll('.nav-dropdown.is-open').forEach((openDropdown) => {
+                if (openDropdown === dropdown) {
+                    return;
+                }
+
+                openDropdown.classList.remove('is-open');
+                openDropdown.querySelector('.dropdown-button')
+                    ?.setAttribute('aria-expanded', 'false');
+            });
+
+            dropdown.classList.toggle('is-open', isOpen);
+            button.setAttribute('aria-expanded', String(isOpen));
+        });
+    });
 
 
     /*
@@ -48,6 +93,39 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
     }
+
+
+    const revealSections = document.querySelectorAll('[data-scroll-reveal]');
+
+    if (!revealSections.length) {
+        return;
+    }
+
+    if (!('IntersectionObserver' in window)) {
+        revealSections.forEach((section) => {
+            section.classList.add('is-visible');
+        });
+
+        return;
+    }
+
+    document.documentElement.classList.add('has-scroll-reveal');
+
+    const revealObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.12,
+        rootMargin: '0px 0px -40px 0px'
+    });
+
+    revealSections.forEach((section) => {
+        revealObserver.observe(section);
+    });
 
 });
 
@@ -110,18 +188,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         });
 
-
-        const activeThumbnail = thumbnails[currentIndex];
-
-        if (activeThumbnail) {
-
-            activeThumbnail.scrollIntoView({
-                behavior: 'smooth',
-                block: 'nearest',
-                inline: 'center'
-            });
-
-        }
 
     }
 
@@ -316,28 +382,15 @@ document.addEventListener('DOMContentLoaded', function () {
     | Foto 3
     |   ↓ 5 detik
     | Foto terakhir
-    |   ↓
-    | STOP
+    |   ↓ 5 detik
+    | Kembali ke foto pertama
     |
     |--------------------------------------------------------------------------
     */
 
     function nextHeroSlide() {
 
-        const nextIndex = currentIndex + 1;
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Kalau sudah sampai foto terakhir:
-        | JANGAN melakukan apa-apa lagi.
-        |--------------------------------------------------------------------------
-        */
-
-        if (nextIndex >= slides.length) {
-            return;
-        }
-
+        const nextIndex = (currentIndex + 1) % slides.length;
 
         showSlide(nextIndex);
 
@@ -361,3 +414,207 @@ document.addEventListener('DOMContentLoaded', function () {
     setTimeout(nextHeroSlide, 5000);
 
 });
+
+
+(() => {
+    if (!document.body.classList.contains('admin-body')) {
+        return;
+    }
+
+    let activeRequest;
+    let navigationId = 0;
+
+    function setLoading(isLoading) {
+        document.body.classList.toggle('admin-is-loading', isLoading);
+        document.querySelector('.admin-content')?.setAttribute('aria-busy', String(isLoading));
+        const progress = document.querySelector('.admin-ajax-progress');
+        progress?.setAttribute('aria-hidden', String(!isLoading));
+        const status = document.querySelector('.admin-ajax-status');
+        if (status) {
+            status.textContent = isLoading ? 'Memuat halaman...' : '';
+        }
+    }
+
+    async function runPageScripts(pageDocument) {
+        const scripts = [...pageDocument.body.querySelectorAll(':scope > script')];
+
+        for (const sourceScript of scripts) {
+            if (sourceScript.src) {
+                const alreadyLoaded = [...document.scripts].some((script) => script.src === sourceScript.src);
+
+                if (alreadyLoaded) {
+                    continue;
+                }
+
+                await new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+                    script.src = sourceScript.src;
+                    script.onload = resolve;
+                    script.onerror = reject;
+                    document.body.append(script);
+                });
+
+                continue;
+            }
+
+            const scriptSource = sourceScript.textContent.trim();
+
+            if (!scriptSource) {
+                continue;
+            }
+
+            const functionNames = [...scriptSource.matchAll(/^(?:async[\t ]+)?function[\t ]+([A-Za-z_$][\w$]*)[\t ]*\(/gm)]
+                .map((match) => match[1]);
+            const exports = [...new Set(functionNames)]
+                .map((name) => `window[${JSON.stringify(name)}] = ${name};`)
+                .join('\n');
+            const script = document.createElement('script');
+
+            script.textContent = `(function () {\n${scriptSource}\n${exports}\n})();`;
+            document.body.append(script);
+            script.remove();
+        }
+    }
+
+    async function loadPage(url, options = {}) {
+        const targetUrl = new URL(url, window.location.href);
+
+        if (targetUrl.origin !== window.location.origin) {
+            window.location.assign(targetUrl.href);
+            return;
+        }
+
+        activeRequest?.abort();
+        activeRequest = new AbortController();
+        const currentNavigationId = ++navigationId;
+        setLoading(true);
+
+        try {
+            const response = await fetch(targetUrl.href, {
+                method: options.method ?? 'GET',
+                body: options.body ?? null,
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'text/html',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    ...(options.body ? { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content ?? '' } : {})
+                },
+                signal: activeRequest.signal
+            });
+            const responseUrl = new URL(response.url);
+
+            if (responseUrl.pathname === '/admin/login') {
+                window.location.assign(responseUrl.href);
+                return;
+            }
+
+            if (!response.ok || !response.headers.get('content-type')?.includes('text/html')) {
+                throw new Error('Halaman tidak dapat dimuat.');
+            }
+
+            const pageDocument = new DOMParser().parseFromString(await response.text(), 'text/html');
+            const nextContent = pageDocument.querySelector('.admin-content');
+            const nextSidebarMenu = pageDocument.querySelector('.admin-sidebar-menu');
+            const currentContent = document.querySelector('.admin-content');
+            const currentSidebarMenu = document.querySelector('.admin-sidebar-menu');
+
+            if (!nextContent || !currentContent) {
+                throw new Error('Konten halaman tidak ditemukan.');
+            }
+
+            currentContent.innerHTML = nextContent.innerHTML;
+
+            if (nextSidebarMenu && currentSidebarMenu) {
+                currentSidebarMenu.innerHTML = nextSidebarMenu.innerHTML;
+            }
+
+            const nextPageTitle = pageDocument.querySelector('.admin-navbar-title');
+            const currentPageTitle = document.querySelector('.admin-navbar-title');
+
+            if (nextPageTitle && currentPageTitle) {
+                currentPageTitle.textContent = nextPageTitle.textContent;
+            }
+
+            document.title = pageDocument.title;
+            document.querySelector('#adminSidebar')?.classList.remove('show-mobile');
+
+            if (options.history === 'push') {
+                window.history.pushState({}, '', responseUrl.href);
+            } else if (responseUrl.href !== window.location.href) {
+                window.history.replaceState({}, '', responseUrl.href);
+            }
+
+            await runPageScripts(pageDocument);
+            window.scrollTo(0, 0);
+        } catch (error) {
+            if (error.name === 'AbortError' || currentNavigationId !== navigationId) {
+                return;
+            }
+
+            const content = document.querySelector('.admin-content');
+            const notice = document.createElement('div');
+            notice.className = 'admin-notice admin-notice-error';
+            notice.setAttribute('role', 'alert');
+            notice.textContent = error.message || 'Halaman tidak dapat dimuat. Periksa koneksi lalu coba lagi.';
+            content?.prepend(notice);
+        } finally {
+            if (currentNavigationId === navigationId) {
+                setLoading(false);
+            }
+        }
+    }
+
+    window.AdminAjax = {
+        refresh: () => loadPage(window.location.href, { history: 'replace' })
+    };
+
+    document.addEventListener('click', (event) => {
+        if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+            return;
+        }
+
+        const link = event.target.closest('a[href]');
+
+        if (!link || !link.closest('.admin-wrapper') || link.target === '_blank' || link.hasAttribute('download')) {
+            return;
+        }
+
+        const targetUrl = new URL(link.href, window.location.href);
+
+        if (targetUrl.origin !== window.location.origin || !targetUrl.pathname.startsWith('/admin/')) {
+            return;
+        }
+
+        event.preventDefault();
+        loadPage(targetUrl.href, { history: 'push' });
+    });
+
+    document.addEventListener('submit', (event) => {
+        const form = event.target.closest('.admin-content form');
+
+        if (!form || event.defaultPrevented) {
+            return;
+        }
+
+        event.preventDefault();
+        const method = (form.method || 'GET').toUpperCase();
+        const targetUrl = new URL(form.action, window.location.href);
+
+        if (method === 'GET') {
+            const parameters = new URLSearchParams(new FormData(form));
+            targetUrl.search = parameters.toString();
+            loadPage(targetUrl.href, { history: 'push' });
+            return;
+        }
+
+        loadPage(targetUrl.href, {
+            method,
+            body: new FormData(form),
+            history: 'replace'
+        });
+    });
+
+    window.addEventListener('popstate', () => {
+        loadPage(window.location.href, { history: 'replace' });
+    });
+})();

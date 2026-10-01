@@ -36,16 +36,35 @@
                     Beranda
                 </a>
 
-                <a href="#">
-                    Profil
+                <a href="{{ route('profil.index') }}">
+                    Tentang Sekolah
                 </a>
 
-                <a href="#">
-                    Berita
+                <a href="{{ route('guru.index') }}">
+                    Guru &amp; Tenaga Kependidikan
                 </a>
 
-                <a href="#">
+                <a href="{{ route('galeri.index') }}">
                     Galeri
+                </a>
+
+            </div>
+
+            {{-- AKADEMIK --}}
+            <div class="footer-column">
+
+                <h3>Akademik</h3>
+
+                <a href="{{ route('program.index', ['jenis' => 'Program Unggulan']) }}">
+                    Program Unggulan
+                </a>
+
+                <a href="{{ route('program.index', ['jenis' => 'Ekstrakurikuler']) }}">
+                    Ekstrakurikuler
+                </a>
+
+                <a href="{{ route('prestasi.index') }}">
+                    Prestasi
                 </a>
 
             </div>
@@ -55,40 +74,21 @@
 
                 <h3>Informasi</h3>
 
-                <a href="#">
-                    Akademik
+                <a href="{{ route('berita.index') }}">
+                    Berita
                 </a>
 
-                <a href="#">
-                    Prestasi
+                <a href="{{ route('agenda.index') }}">
+                    Agenda
                 </a>
 
-                <a href="#">
+                <a href="{{ route('fasilitas.index') }}">
                     Fasilitas
                 </a>
 
-                <a href="#">
+                <a href="{{ route('spmb.index') }}">
                     SPMB
                 </a>
-
-            </div>
-
-            {{-- KONTAK --}}
-            <div class="footer-column">
-
-                <h3>Kontak</h3>
-
-                <p>
-                    📍 Alamat sekolah
-                </p>
-
-                <p>
-                    ☎ Nomor telepon
-                </p>
-
-                <p>
-                    ✉ Email sekolah
-                </p>
 
             </div>
 

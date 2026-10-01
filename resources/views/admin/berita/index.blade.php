@@ -43,6 +43,7 @@
 
     </div>
 
+    @include('admin.layouts.page-size', ['paginator' => $beritas])
     <form method="GET" action="{{ route('admin.berita.index') }}" class="admin-search-bar">
         <input
             type="search"
@@ -109,18 +110,7 @@
 
                             @else
 
-                                <div style="
-                                    width: 70px;
-                                    height: 50px;
-                                    border-radius: 8px;
-                                    background: #f1f5f9;
-                                    display: flex;
-                                    align-items: center;
-                                    justify-content: center;
-                                    font-size: 20px;
-                                ">
-                                    📰
-                                </div>
+                                <div class="admin-image-placeholder" aria-hidden="true"></div>
 
                             @endif
 
@@ -215,16 +205,12 @@
                             style="text-align:center; padding:50px;"
                         >
 
-                            <div style="font-size:45px; margin-bottom:10px;">
-                                📰
-                            </div>
-
                             <strong>
-                                Belum ada berita
+                                {{ $search ? 'Tidak ada berita yang cocok' : 'Belum ada berita' }}
                             </strong>
 
                             <p style="color:#64748b; margin-top:5px;">
-                                Tambahkan berita pertama untuk website sekolah.
+                                {{ $search ? 'Coba kata kunci lain.' : 'Tambahkan berita pertama untuk website sekolah.' }}
                             </p>
 
                         </td>
@@ -239,11 +225,7 @@
 
     </div>
 
-    @if ($beritas->hasPages())
-        <div class="admin-pagination">
-            {{ $beritas->onEachSide(1)->links() }}
-        </div>
-    @endif
+    @include('admin.layouts.pagination', ['paginator' => $beritas])
 
 </div>
 
@@ -640,7 +622,7 @@ beritaForm.addEventListener('submit', async function (event) {
         closeBeritaModal();
 
         setTimeout(() => {
-            window.location.reload();
+            window.AdminAjax.refresh();
         }, 1500);
 
 
@@ -730,7 +712,7 @@ async function deleteBerita(id) {
 
 
         setTimeout(() => {
-            window.location.reload();
+            window.AdminAjax.refresh();
         }, 1500);
 
 

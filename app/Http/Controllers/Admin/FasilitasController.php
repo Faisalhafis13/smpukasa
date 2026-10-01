@@ -15,11 +15,13 @@ class FasilitasController extends Controller
     ) {
     }
 
-    public function index(): View
+    public function index(Request $request): View
     {
-        $fasilitas = $this->fasilitasRepository->getAll();
+        $search = trim((string) $request->query('search', ''));
+        $perPage = (int) $request->query('per_page', 10);
+        $fasilitas = $this->fasilitasRepository->getAll($search, $perPage);
 
-        return view('admin.fasilitas.index', compact('fasilitas'));
+        return view('admin.fasilitas.index', compact('fasilitas', 'search'));
     }
 
     public function store(Request $request): JsonResponse

@@ -149,17 +149,17 @@
                     {{-- ACTION --}}
                     <div class="spmb-action">
 
-                        @if ($spmb->link_pendaftaran)
-
+                        @if ($spmb->status === 'Dibuka')
                             <a
-                                href="{{ $spmb->link_pendaftaran }}"
-                                target="_blank"
-                                rel="noopener noreferrer"
+                                href="{{ route('spmb.pendaftaran.create') }}"
                                 class="spmb-button"
                             >
                                 Daftar Sekarang
                             </a>
-
+                        @else
+                            <span class="spmb-registration-unavailable" aria-disabled="true">
+                                Pendaftaran Belum Dibuka
+                            </span>
                         @endif
 
 

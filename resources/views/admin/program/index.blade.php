@@ -48,6 +48,21 @@
 
     </div>
 
+    @include('admin.layouts.page-size', ['paginator' => $programs])
+    <form method="GET" action="{{ route('admin.program.index') }}" class="admin-search-bar">
+        <input
+            type="search"
+            name="search"
+            value="{{ $search }}"
+            placeholder="Cari nama, jenis, pembina, atau jadwal..."
+            aria-label="Cari program"
+        >
+        <button type="submit" class="admin-btn admin-btn-primary">Cari</button>
+        @if ($search)
+            <a href="{{ route('admin.program.index') }}" class="admin-btn admin-btn-secondary">Reset</a>
+        @endif
+    </form>
+
 
     <div class="admin-table-wrapper">
 
@@ -82,7 +97,7 @@
                     <tr>
 
                         <td>
-                            {{ $index + 1 }}
+                            {{ $programs->firstItem() + $index }}
                         </td>
 
 
@@ -103,18 +118,7 @@
 
                             @else
 
-                                <div style="
-                                    width:70px;
-                                    height:50px;
-                                    border-radius:8px;
-                                    background:#f1f5f9;
-                                    display:flex;
-                                    align-items:center;
-                                    justify-content:center;
-                                    font-size:20px;
-                                ">
-                                    🎓
-                                </div>
+                                <div class="admin-image-placeholder" aria-hidden="true"></div>
 
                             @endif
 
@@ -206,22 +210,13 @@
                             "
                         >
 
-                            <div style="
-                                font-size:45px;
-                                margin-bottom:10px;
-                            ">
-                                🎓
-                            </div>
-
-                            <strong>
-                                Belum ada program
-                            </strong>
+                            <strong>{{ $search ? 'Tidak ada program yang cocok' : 'Belum ada program' }}</strong>
 
                             <p style="
                                 color:#64748b;
                                 margin-top:5px;
                             ">
-                                Tambahkan program atau ekstrakurikuler pertama.
+                                {{ $search ? 'Coba kata kunci lain.' : 'Tambahkan program atau ekstrakurikuler pertama.' }}
                             </p>
 
                         </td>
@@ -235,6 +230,8 @@
         </table>
 
     </div>
+
+    @include('admin.layouts.pagination', ['paginator' => $programs])
 
 </div>
 
@@ -627,7 +624,7 @@ programForm.addEventListener(
             closeProgramModal();
 
             setTimeout(() => {
-                window.location.reload();
+                window.AdminAjax.refresh();
             }, 1500);
 
         } catch (error) {
@@ -724,7 +721,7 @@ async function deleteProgram(id)
 
 
         setTimeout(() => {
-            window.location.reload();
+            window.AdminAjax.refresh();
         }, 1500);
 
     } catch (error) {

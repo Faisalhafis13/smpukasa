@@ -7,8 +7,10 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class GaleriRepository
 {
-    public function getAll(string $search = ''): LengthAwarePaginator
+    public function getAll(string $search = '', int $perPage = 10): LengthAwarePaginator
     {
+        $perPage = min(max($perPage, 10), 100);
+
         return Galeri::query()
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
@@ -19,7 +21,7 @@ class GaleriRepository
             })
             ->latest('tanggal')
             ->latest('id')
-            ->paginate(12)
+            ->paginate($perPage)
             ->withQueryString();
     }
 

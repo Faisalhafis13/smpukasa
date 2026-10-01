@@ -3,14 +3,29 @@
 namespace App\Repositories\Admin;
 
 use App\Models\Prestasi;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class PrestasiRepository
 {
-    public function getAll()
+    public function getAll(string $search = '', int $perPage = 10): LengthAwarePaginator
     {
-        return Prestasi::latest('tahun')
+        $perPage = min(max($perPage, 10), 100);
+
+        return Prestasi::query()
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('judul', 'like', "%{$search}%")
+                        ->orWhere('deskripsi', 'like', "%{$search}%")
+                        ->orWhere('tingkat', 'like', "%{$search}%")
+                        ->orWhere('kategori', 'like', "%{$search}%")
+                        ->orWhere('peraih', 'like', "%{$search}%")
+                        ->orWhere('penyelenggara', 'like', "%{$search}%");
+                });
+            })
+            ->latest('tahun')
             ->latest('id')
-            ->get();
+            ->paginate($perPage)
+            ->withQueryString();
     }
 
     public function findById(int $id): ?Prestasi

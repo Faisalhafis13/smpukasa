@@ -20,7 +20,7 @@
 
 
             {{-- MENU --}}
-            <div class="navbar-menu">
+            <div class="navbar-menu" id="mobileMenu">
 
                 {{-- BERANDA --}}
                 <a
@@ -92,6 +92,7 @@
 
                         <a href="{{ route('agenda.index') }}">
                             Agenda
+                        </a>
 
                     </div>
 
@@ -124,6 +125,13 @@
                     SPMB
                 </a>
 
+                <a
+                    href="{{ route('admin.login') }}"
+                    class="nav-link nav-admin-login {{ request()->routeIs('admin.login') ? 'active' : '' }}"
+                >
+                    Login Admin
+                </a>
+
             </div>
 
 
@@ -133,6 +141,8 @@
                 class="mobile-menu-button"
                 id="mobileMenuButton"
                 aria-label="Buka menu"
+                aria-controls="mobileMenu"
+                aria-expanded="false"
             >
                 ☰
             </button>

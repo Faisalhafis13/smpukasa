@@ -18,6 +18,11 @@
 
 <body class="admin-body">
 
+    <div class="admin-ajax-progress" aria-hidden="true">
+        <span></span>
+    </div>
+    <div class="admin-ajax-status" role="status" aria-live="polite"></div>
+
     <div class="admin-wrapper">
 
         @include('admin.layouts.sidebar')

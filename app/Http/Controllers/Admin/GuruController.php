@@ -15,11 +15,13 @@ class GuruController extends Controller
     ) {
     }
 
-    public function index(): View
+    public function index(Request $request): View
     {
-        $gurus = $this->guruRepository->getAll();
+        $search = trim((string) $request->query('search', ''));
+        $perPage = (int) $request->query('per_page', 10);
+        $gurus = $this->guruRepository->getAll($search, $perPage);
 
-        return view('admin.guru.index', compact('gurus'));
+        return view('admin.guru.index', compact('gurus', 'search'));
     }
 
     public function store(Request $request): JsonResponse

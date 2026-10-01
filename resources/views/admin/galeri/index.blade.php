@@ -43,6 +43,7 @@
 
     </div>
 
+    @include('admin.layouts.page-size', ['paginator' => $galeris])
     <form method="GET" action="{{ route('admin.galeri.index') }}" class="admin-search-bar">
         <input
             type="search"
@@ -131,16 +132,12 @@
                 padding: 60px 20px;
             ">
 
-                <div style="font-size:50px;">
-                    🖼️
-                </div>
-
                 <h3>
-                    Belum ada foto
+                    {{ $search ? 'Tidak ada foto yang cocok' : 'Belum ada foto' }}
                 </h3>
 
                 <p style="color:#64748b;">
-                    Tambahkan dokumentasi pertama sekolah.
+                    {{ $search ? 'Coba kata kunci lain.' : 'Tambahkan dokumentasi pertama sekolah.' }}
                 </p>
 
             </div>
@@ -149,11 +146,7 @@
 
     </div>
 
-    @if ($galeris->hasPages())
-        <div class="admin-pagination">
-            {{ $galeris->onEachSide(1)->links() }}
-        </div>
-    @endif
+    @include('admin.layouts.pagination', ['paginator' => $galeris])
 
 </div>
 
@@ -496,7 +489,7 @@ galeriForm.addEventListener(
         });
 
         setTimeout(() => {
-            window.location.reload();
+            window.AdminAjax.refresh();
         }, 1500);
 
     }
@@ -578,7 +571,7 @@ async function deleteGaleri(id) {
 
 
     setTimeout(() => {
-        window.location.reload();
+        window.AdminAjax.refresh();
     }, 1500);
 
 }

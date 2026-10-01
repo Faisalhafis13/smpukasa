@@ -15,11 +15,13 @@ class AgendaController extends Controller
     ) {
     }
 
-    public function index(): View
+    public function index(Request $request): View
     {
-        $agendas = $this->agendaRepository->getAll();
+        $search = trim((string) $request->query('search', ''));
+        $perPage = (int) $request->query('per_page', 10);
+        $agendas = $this->agendaRepository->getAll($search, $perPage);
 
-        return view('admin.agenda.index', compact('agendas'));
+        return view('admin.agenda.index', compact('agendas', 'search'));
     }
 
     public function store(Request $request): JsonResponse

@@ -3,12 +3,27 @@
 namespace App\Repositories\Admin;
 
 use App\Models\Program;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ProgramRepository
 {
-    public function getAll()
+    public function getAll(string $search = '', int $perPage = 10): LengthAwarePaginator
     {
-        return Program::latest()->get();
+        $perPage = min(max($perPage, 10), 100);
+
+        return Program::query()
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('nama', 'like', "%{$search}%")
+                        ->orWhere('jenis', 'like', "%{$search}%")
+                        ->orWhere('deskripsi', 'like', "%{$search}%")
+                        ->orWhere('pembina', 'like', "%{$search}%")
+                        ->orWhere('jadwal', 'like', "%{$search}%");
+                });
+            })
+            ->latest('id')
+            ->paginate($perPage)
+            ->withQueryString();
     }
 
     public function findById(int $id): ?Program
